@@ -1,0 +1,145 @@
+\documentclass[12pt]{article}
+\usepackage{csquotes}
+\usepackage{blindtext}
+\usepackage{titling}
+\usepackage[papersize={8.5in,11in}, margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{parskip}
+\usepackage{adjustbox}
+\usepackage{hyperref}
+\usepackage{amsfonts}
+\usepackage{float}
+\usepackage{sourcecodepro}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{mathpartir}
+\usepackage[english]{babel}
+
+\usepackage{graphicx, amsmath, amsfonts, amssymb, enumerate, amsthm, commath, float, xcolor}
+% Useful packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+% \usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\lstset{basicstyle=\ttfamily}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor=black,
+    pdfpagemode=FullScreen,
+}
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{bib.bib}
+
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+
+\begin{document}
+
+\begin{titlepage}
+
+	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+	\center
+
+	\includegraphics[width=250px, keepaspectratio]{./columbia-logo.png}\\[1cm]
+	\textsc{\Large Research Project}\\[0.5cm]
+	\textsc{\large COMS 4901}\\[0.3cm]
+	\textsc{\large Prof. Stephen Edwards and John Hui}\\[0.5cm]
+
+	\HRule \\[0.4cm]
+	{ \huge \bfseries Rust implementation of solutions to the Order Maintenance Problem}\\[0.4cm]
+	\HRule \\[1.5cm]
+
+	\begin{minipage}{0.4\textwidth}
+		\begin{center} \large
+			Alexis \textsc{Gadonneix} (ag4625)\\
+		\end{center}
+
+	\end{minipage}\\[2cm]
+
+	{\large December 2023}\\[2cm]
+
+	\vfill
+
+\end{titlepage}
+
+\section{Tests}
+
+Blabla
+
+\begin{lstlisting}
+	fn test() {
+		code = working;
+	}
+\end{lstlisting}
+
+maths :
+\begin{equation}
+	\begin{aligned}
+		\text{minimize} \quad   & \sum_{i=1}^{n} \sum_{j=1}^{n} c_{ij} x_{ij}       \\
+		\text{subject to} \quad & \sum_{i=1}^{n} x_{ij} = 1, \quad j = 1, \dots, n, \\
+		                        & \sum_{j=1}^{n} x_{ij} = 1, \quad i = 1, \dots, n, \\
+		                        & x_{ij} \in \{0, 1\}, \quad i,j = 1, \dots, n.
+	\end{aligned}
+\end{equation}
+
+\newpage
+\section{Introduction}
+
+\begin{itemize}
+	\item Problem
+	\item Applications
+	\item Litterature
+	\item Goals
+\end{itemize}
+
+\newpage
+\section{Algorithms}
+
+\subsection{Naive}
+\subsection{Dietz \& Sleator}
+\subsection{Bender et al.}
+
+
+\newpage
+\section{Implementation}
+
+\newpage
+\section{Testing, Benchmarking, and results}
+
+\subsection{Unit tests, Integration tests, and Quickcheck}
+
+\subsection{Bugs found and fixed}
+
+\subsection{Benchmarks, Profiling, and Optimization}
+
+
+\newpage
+\section{Conclusion and Future Work}
+
+\begin{itemize}
+	\item Test and benchmark on a microcontroller
+	\item Try different allocation strategies
+	\item Implement a "naive start" for small use cases
+\end{itemize}
+
+\printbibliography
+
+\end{document}
