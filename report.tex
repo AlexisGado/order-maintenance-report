@@ -103,19 +103,73 @@ maths :
 \newpage
 \section{Introduction}
 
+The order maintenance problem is a well-known problem in computer science. It is defined as follows: given a set of elements, we want to maintain a data structure that supports the following operations:
 \begin{itemize}
-	\item Problem
-	\item Applications
-	\item Litterature
-	\item Goals
+	\item \texttt{insert(x)}: insert a new element right after \texttt{x}
+	\item \texttt{delete(x)}: delete \texttt{x}
+	\item \texttt{compare(x, y)}: which element of \texttt{x} and \texttt{y} has higher priority?
+\end{itemize}
+
+A first very crude solution to this problem is to use a vector. But all operations are linear in the size of the vector. We can do better.
+A better idea would be to use a linked list. But then, the \texttt{compare} operation is linear in the size of the list...
+
+This data structure has several applications in computer science such as process scheduling and graph algorithms.
+We will focus on two data structures to solve this problem: The firstwas proposed by Dietz \& Sleator in 1987 \cite{10.1145/28395.28434} and the second by Bender et al. in 2002 \cite{10.5555/647912.740822}.
+The two solutions have very similar theoretical bounds, but the second one is more practical.
+
+The main goals of this project are:
+\begin{itemize}
+	\item Implement both solutions in Rust
+	\item Test and debug them
+	\item Benchmark, compare, and optimize them
 \end{itemize}
 
 \newpage
 \section{Algorithms}
 
 \subsection{Naive}
+
+Before diving into the two solutions, let's look at a naive solution to the problem.
+We can store our priorities in a binary tree that grows deeper and deeper as we insert elements.
+To avoid having to maintain an actual tree, we can simply use the labels of the nodes:
+\begin{itemize}
+	\item The first priority is labeled 0
+	\item When we do an \texttt{insert(x)}, we relabel \texttt{x} to be $2 \times \texttt{label(x)}$ and the new element has label $2 \times \texttt{label(x)} + 1$
+	\item The comparison between two elements is simply a comparison of their labels
+\end{itemize}
+
+TODO: insert image
+
+This solution is easy to implement and operations are fast, but it has a major drawback: the labels grow exponentially with the number of insertions and will quickly overflow.
+
 \subsection{Dietz \& Sleator}
-\subsection{Bender et al.}
+
+In the solution proposed by Dietz \& Sleator in 1987 \cite{10.1145/28395.28434}, we think of the set of possible labels (e.g. $0$ to $2^{64}$) as a circular list that we will fill in as we insert elements.
+The general idea for inserting a new priority after a priority \texttt{x} is the following (see algorithm TODO for more details):
+\begin{itemize}
+	\item We iterate through the successors of \texttt{x} and compute a weight for each of them based on the distance between the elements
+	\item We stop when we reach an element whose weight is smaller than a threshold (intuitively, this means that the element is "far enough")
+	\item We then relabel those elements evenly
+	\item Finally, we choose a label in between the labels of \texttt{x} its successor (in the middle) and we create a new priority with this label
+\end{itemize}
+
+TODO: insert image
+
+Note that to avoid overflowing, we will simply loop back to 0 when we reach the maximum label ($2^{64}$).
+But this means that in order to compare two elements, we have to keep track of a "base" label starting at 0 and shifting if necessary.
+Then, the comparison operation is:
+$$ (\texttt{label(x)} - \texttt{label(base)}) \quad \text{mod} \quad 2^{64} < (\texttt{label(y)} - \texttt{label(base)}) \quad \text{mod} \quad 2^{64} $$
+
+The paper proves the following theoretical complexity bounds (where $n$ is the number of elements in the data structure):
+\begin{itemize}
+	\item \texttt{insert(x)}: $O(\log n)$ (amortized)
+	\item \texttt{delete(x)}: $O(1)$
+	\item \texttt{compare(x, y)}: $O(1)$
+\end{itemize}
+
+todo: talk about indirection
+
+\subsection{Bender et al. \cite{10.5555/647912.740822}}
 
 
 \newpage
@@ -140,6 +194,7 @@ maths :
 	\item Implement a "naive start" for small use cases
 \end{itemize}
 
+\newpage
 \printbibliography
 
 \end{document}
