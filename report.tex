@@ -39,11 +39,7 @@
     citecolor=black,
     pdfpagemode=FullScreen,
 }
-\usepackage[
-backend=biber,
-style=alphabetic,
-sorting=ynt
-]{biblatex}
+\usepackage[backend=biber, style=alphabetic, sorting=ynt]{biblatex}
 \addbibresource{bib.bib}
 
 \usepackage{algpseudocode}
@@ -54,29 +50,29 @@ sorting=ynt
 
 \begin{titlepage}
 
-	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+  \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
-	\center
+  \center
 
-	\includegraphics[width=250px, keepaspectratio]{./columbia-logo.png}\\[1cm]
-	\textsc{\Large Research Project}\\[0.5cm]
-	\textsc{\large COMS 4901}\\[0.3cm]
-	\textsc{\large Prof. Stephen Edwards and John Hui}\\[0.5cm]
+  \includegraphics[width=250px, keepaspectratio]{./columbia-logo.png}\\[1cm]
+  \textsc{\Large Research Project}\\[0.5cm]
+  \textsc{\large COMS 4901}\\[0.3cm]
+  \textsc{\large Prof. Stephen Edwards and John Hui}\\[0.5cm]
 
-	\HRule \\[0.4cm]
-	{ \huge \bfseries Rust implementation of solutions to the Order Maintenance Problem}\\[0.4cm]
-	\HRule \\[1.5cm]
+  \HRule \\[0.4cm]
+  { \huge \bfseries Implementation of two solutions to the Order Maintenance Problem}\\[0.4cm]
+  \HRule \\[1.5cm]
 
-	\begin{minipage}{0.4\textwidth}
-		\begin{center} \large
-			Alexis \textsc{Gadonneix} (ag4625)\\
-		\end{center}
+  \begin{minipage}{0.4\textwidth}
+    \begin{center} \large
+      Alexis \textsc{Gadonneix} (ag4625)\\
+    \end{center}
 
-	\end{minipage}\\[2cm]
+  \end{minipage}\\[2cm]
 
-	{\large December 2023}\\[2cm]
+  {\large December 2023}\\[2cm]
 
-	\vfill
+  \vfill
 
 \end{titlepage}
 
@@ -90,14 +86,14 @@ Blabla
 	}
 \end{lstlisting}
 
-maths :
+maths:
 \begin{equation}
-	\begin{aligned}
-		\text{minimize} \quad   & \sum_{i=1}^{n} \sum_{j=1}^{n} c_{ij} x_{ij}       \\
-		\text{subject to} \quad & \sum_{i=1}^{n} x_{ij} = 1, \quad j = 1, \dots, n, \\
-		                        & \sum_{j=1}^{n} x_{ij} = 1, \quad i = 1, \dots, n, \\
-		                        & x_{ij} \in \{0, 1\}, \quad i,j = 1, \dots, n.
-	\end{aligned}
+  \begin{aligned}
+    \text{minimize} \quad   & \sum_{i=1}^{n} \sum_{j=1}^{n} c_{ij} x_{ij}       \\
+    \text{subject to} \quad & \sum_{i=1}^{n} x_{ij} = 1, \quad j = 1, \dots, n, \\
+                            & \sum_{j=1}^{n} x_{ij} = 1, \quad i = 1, \dots, n, \\
+                            & x_{ij} \in \{0, 1\}, \quad i,j = 1, \dots, n.
+  \end{aligned}
 \end{equation}
 
 \newpage
@@ -105,9 +101,9 @@ maths :
 
 The order maintenance problem is a well-known problem in computer science. It is defined as follows: given a set of elements, we want to maintain a data structure that supports the following operations:
 \begin{itemize}
-	\item \texttt{insert(x)}: insert a new element right after \texttt{x}
-	\item \texttt{delete(x)}: delete \texttt{x}
-	\item \texttt{compare(x, y)}: which element of \texttt{x} and \texttt{y} has higher priority?
+  \item \texttt{insert(x)}: insert a new element right after \texttt{x}
+  \item \texttt{delete(x)}: delete \texttt{x}
+  \item \texttt{compare(x, y)}: which element of \texttt{x} and \texttt{y} has higher priority?
 \end{itemize}
 
 A first very crude solution to this problem is to use a vector. But all operations are linear in the size of the vector. We can do better.
@@ -119,9 +115,9 @@ The two solutions have very similar theoretical bounds, but the second one is mo
 
 The main goals of this project are:
 \begin{itemize}
-	\item Implement both solutions in Rust
-	\item Test and debug them
-	\item Benchmark, compare, and optimize them
+  \item Implement both solutions in Rust
+  \item Test and debug
+  \item Benchmark, compare, and optimize
 \end{itemize}
 
 \newpage
@@ -133,9 +129,9 @@ Before diving into the two solutions, let's look at a naive solution to the prob
 We can store our priorities in a binary tree that grows deeper and deeper as we insert elements.
 To avoid having to maintain an actual tree, we can simply use the labels of the nodes:
 \begin{itemize}
-	\item The first priority is labeled 0
-	\item When we do an \texttt{insert(x)}, we relabel \texttt{x} to be $2 \times \texttt{label(x)}$ and the new element has label $2 \times \texttt{label(x)} + 1$
-	\item The comparison between two elements is simply a comparison of their labels
+  \item The first priority is labeled 0
+  \item When we do an \texttt{insert(x)}, we relabel \texttt{x} to be $2 \times \texttt{label(x)}$ and the new element has label $2 \times \texttt{label(x)} + 1$
+  \item The comparison between two elements is simply a comparison of their labels
 \end{itemize}
 
 TODO: insert image
@@ -145,13 +141,16 @@ This solution is easy to implement and operations are fast, but it has a major d
 \subsection{Dietz \& Sleator}
 
 In the solution proposed by Dietz \& Sleator in 1987 \cite{10.1145/28395.28434}, we think of the set of possible labels (e.g. $0$ to $2^{64}$) as a circular list that we will fill in as we insert elements.
+The priorities are connected together by a circular doubly-linked list.
 The general idea for inserting a new priority after a priority \texttt{x} is the following (see algorithm TODO for more details):
 \begin{itemize}
-	\item We iterate through the successors of \texttt{x} and compute a weight for each of them based on the distance between the elements
-	\item We stop when we reach an element whose weight is smaller than a threshold (intuitively, this means that the element is "far enough")
-	\item We then relabel those elements evenly
-	\item Finally, we choose a label in between the labels of \texttt{x} its successor (in the middle) and we create a new priority with this label
+  \item We iterate through the successors of \texttt{x} and compute a weight for each of them based on the distance between the elements
+  \item We stop when we reach an element whose weight is smaller than a threshold (intuitively, this means that the element is "far enough")
+  \item We then relabel those elements evenly
+  \item Finally, we choose a label in between the labels of \texttt{x} its successor (in the middle) and we create a new priority with this label
 \end{itemize}
+
+We call this algorithm \textbf{list-range relabeling}.
 
 TODO: insert image
 
@@ -160,20 +159,86 @@ But this means that in order to compare two elements, we have to keep track of a
 Then, the comparison operation is:
 $$ (\texttt{label(x)} - \texttt{label(base)}) \quad \text{mod} \quad 2^{64} < (\texttt{label(y)} - \texttt{label(base)}) \quad \text{mod} \quad 2^{64} $$
 
+Deleting an element of the data structure is as simple as removing it from the linked list.
+
 The paper proves the following theoretical complexity bounds (where $n$ is the number of elements in the data structure):
 \begin{itemize}
-	\item \texttt{insert(x)}: $O(\log n)$ (amortized)
-	\item \texttt{delete(x)}: $O(1)$
-	\item \texttt{compare(x, y)}: $O(1)$
+  \item \texttt{insert(x)}: $O(\log n)$ (amortized)
+  \item \texttt{delete(x)}: $O(1)$
+  \item \texttt{compare(x, y)}: $O(1)$
 \end{itemize}
 
-todo: talk about indirection
+It is possible to get an $O(1)$ amortized complexity for \texttt{insert(x)} by adding a level of indirection using a technique by Tsakalidis \cite{10.1007/BFb0036494}. We chose not to implement this extra-layer for the sake of simplicity and because we thought that the complexity gains would be too small in comparison to the cost of the extra lookup.
 
-\subsection{Bender et al. \cite{10.5555/647912.740822}}
+This data structure theoretically only supports $\sqrt{M}$ insertions where $M$ is the number of possible labels ($2^32$ or $2^{64}$). It is a significant limitation on a $32$-bits machine as you can insert at most $65$K priorities.
 
+\subsection{Bender et al.}
+
+In 2002, Bender et al. proposed a new solution to the problem in \cite{10.5555/647912.740822}. The main goal of this approach is not to provide better bounds, but to get an algorithm and a proof that are more intuitive. In practice, we will see that our implementation is in fact faster than the first algorithm for some operations.
+
+This time, we look at the set of possible labels ($0$ to $2^{64}$) as the leaves of a binary tree whose root is the empty string, and each node $n$ has two children $n:0 = 2 \times n$ and $n:1 = 2 \times n + 1$ (where $:$ is the concatenation to the binary representation).
+We don't have to maintain an explicit tree because we can easily compute the parent or the children of a node with bit operations.
+And once again, the priorities (which are leaves of the implicit tree) are connected together by a doubly-linked list (this one doesn't need to be circular).
+
+The algorithm for \texttt{insert(x)} is pretty straightforward (ref algo TODO), and the key steps are:
+
+\begin{itemize}
+  \item if there is space ($\texttt{label(next(x))} > \texttt{label(x)} + 1$), then just insert the new element somewhere in between.
+  \item if there is no space available, we have to relabel (we call this algorithm \textbf{tag-range relabeling}).
+        \begin{itemize}
+          \item To do so, we simply have to go up the tree and find the first sub-tree containing \texttt{x} that is not "too dense".
+          \item Once we find this sub-tree, we simply have to spread evenly all the elements it contains over the range of labels the sub-tree. Note that once again, all these operations can be done with simple bit operations over the labels.
+        \end{itemize}
+\end{itemize}
+
+TODO: Insert image
+
+The paper proves that this algorithm has the same complexity bounds as the previous one:
+\begin{itemize}
+  \item \texttt{insert(x)}: $O(\log n)$
+  \item \texttt{delete(x)}: $O(1)$
+  \item \texttt{compare(x, y)}: $O(1)$
+\end{itemize}
+
+The same indirection trick can be applied to reduce the insertion complexity, but we chose not to implement it for the same reasons as before.
+
+Deleting an element of the data structure is as simple as removing it from the linked list.
+And a small but important difference is that, in order to compare two elements, we simply have to compare their labels (and we don't have to compute their position relative to a base as in the previous solution).
+
+The previous data structure was limited to $\sqrt{M}$ insertions. Here, the maximum number of elements you can insert depends on the parameter $T$. If $T$ is close to $2$, the insertion will be faster but you can only insert a small amount of priorities before the root overflows. If $T$ is close to $1$, the algorithm is slower but you can insert more priorities (close to $M$).
+The issue is that it's difficult to find a good trade-off as the user doesn't usually know up-front how many priorities he will need.
+But the good news is that $T$ doesn't have to be fixed and you can compute the best $T$ at each insertion.
+This computation is not free though, and we will see later (TODO ref to relevant section) how we made this process faster.
 
 \newpage
 \section{Implementation}
+
+In this section, I will present the main data structures and design choices of our implementations, as well as some tricks we used to improve the speed.
+
+\subsection{Interface}
+
+The project was built as a Rust library (a \lstinline{cargo crate}). In order to have a common interface for multiple implementations, as well as shared tests and benchmarks, we leveraged Rust's \lstinline{Trait} system. The interface for a priority is minimal:
+\begin{itemize}
+  \item \lstinline{new: () -> Priority}: create a new priority, unrelated to any other priority
+  \item \lstinline{insert: Priority -> Priority}: insert a new priority right after the argument
+\end{itemize}
+
+The comparison is made possible through the implementation of the \lstinline{PartialCmp} trait which lets us use the common comparison operators (\lstinline{>=}, \lstinline{<}, etc.).
+
+The deletion is implemented through the \lstinline{Drop} trait, which acts as a destructor. A priority is deleted from the data structure when it goes out of scope.
+
+\subsection{Common data structures}
+
+I won't go too much into the technical details, but we used a couple of data structures to implement both solutions (\cite{10.5555/647912.740822} and \cite{10.1145/28395.28434}).
+
+\begin{itemize}
+  \item \lstinline{PriorityInner} is a node of a circular doubly-linked list. It can be seen as the private interface of a \lstinline{Priority}. It stores the following fields: \lstinline{prev}, \lstinline{next}, \lstinline{label}, \lstinline{ref_count}. The first two are (smart) pointers to the neighbors, the third is the label as a \lstinline{usize = u64} (on a 64-bit machine), and the last one is used for the manual reference counting. Those fields are actually wrapped in smart pointers called \lstinline{RefCell}, mutable memory locations. It is necessary to abide by Rust's borrow checker when trying to mutate a field of an object that is not owned or borrowed as mutable (this is called the interior mutability pattern).
+  \item \lstinline{Arena} is the internal store of priorities containing all the \lstinline{PriorityInner}. In our case, it's a \lstinline{Slab}. It is indexed by \lstinline{PriorityKey}, an alias for \lstinline{usize}. The implementation of the \lstinline{Arena} contains all the methods in charge of creating, deleting, and connecting the \lstinline{PriorityInner}, the nodes of the linked list.
+\end{itemize}
+
+The end-user has access to a \lstinline{Priority}, which contains (privately) its \lstinline{PriorityKey} and a reference to the \lstinline{Arena}.
+
+\subsection{Pre-compute the density thresholds}
 
 \newpage
 \section{Testing, Benchmarking, and results}
@@ -182,6 +247,10 @@ todo: talk about indirection
 
 \subsection{Bugs found and fixed}
 
+Overflow issue DnS
+
+min and max labels overflow Bender
+
 \subsection{Benchmarks, Profiling, and Optimization}
 
 
@@ -189,12 +258,13 @@ todo: talk about indirection
 \section{Conclusion and Future Work}
 
 \begin{itemize}
-	\item Test and benchmark on a microcontroller
-	\item Try different allocation strategies
-	\item Implement a "naive start" for small use cases
+  \item Test and benchmark on a microcontroller
+  \item Try different allocation strategies
+  \item Implement a "naive start" for small use cases
 \end{itemize}
 
 \newpage
 \printbibliography
 
 \end{document}
+
